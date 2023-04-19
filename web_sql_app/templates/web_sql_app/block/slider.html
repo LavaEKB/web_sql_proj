@@ -1,0 +1,51 @@
+{% load static %}
+<br>
+<br>
+<style >
+  .swiper {
+    height: 300px;
+  }
+  .swiper-slide {
+    width: 300px;
+  }
+  </style>
+  
+  <!-- Slider main container -->
+  <div class="swiper container">
+    <!-- Additional required wrapper -->
+    <div class="swiper-wrapper">
+      <!-- Slides -->
+      <div class="swiper-slide">
+        <div class="card text-left">
+          <div class="card-body">
+            <h4 class="card-title">Информация по пропуску</h4>
+            <div class="card-text">Получение данных по серии и номеру пропуска. Нужно будет ввести серию и номер пропуска (карты), а так же SCard</div>
+            <br>
+            <a href="{% url 'sp_get_amcom' %}" class="btn btn-primary">Начать</a>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="card text-left">
+          <div class="card-body">
+            <h4 class="card-title">Информация по питанию</h4>
+            <div class="card-text">Получение данных по всем видам питания. Нужно будет ввести серию и номер пропуска (карты), а так же SCard</div>
+            <br>
+            <a href="{% url 'sp_get_talon' %}" class="btn btn-primary">Начать</a>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="card text-left">
+          <div class="card-body">
+            <h4 class="card-title">Запись продаж</h4>
+            <div class="card-text">Запись данных продаж по кассе по всем видам питания. Нужно будет ввести серию и номер пропуска (карты), сумму кредита, номер кассы, сумму ПП, дату, вид записи, количество талонов</div>
+            <br>
+            <a href="{% url 'sp_accept_amcom_pay' %}" class="btn btn-primary">Начать</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <!-- If we need pagination 
+    <div class="swiper-pagination"></div> -->
