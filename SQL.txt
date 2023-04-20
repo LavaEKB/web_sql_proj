@@ -1,0 +1,150 @@
+-- DROP SCHEMA dbo;
+
+CREATE SCHEMA dbo;
+-- ms_django.dbo.CARDS definition
+
+-- Drop table
+
+-- DROP TABLE ms_django.dbo.CARDS;
+
+CREATE TABLE ms_django.dbo.CARDS (
+	cards varchar(50) COLLATE Cyrillic_General_CI_AS NOT NULL,
+	FIO varchar(100) COLLATE Cyrillic_General_CI_AS NULL,
+	ntab char(10) COLLATE Cyrillic_General_CI_AS NULL,
+	AMCOM decimal(10,2) NULL,
+	Status int NULL,
+	fcard int NULL,
+	ncard int NULL,
+	rowver varbinary(8) NULL,
+	UUID char(36) COLLATE Cyrillic_General_CI_AS NULL,
+	Vid int DEFAULT 1 NOT NULL,
+	KolAll int NULL,
+	Kol int NULL,
+	ID numeric(38,0) IDENTITY(0,1) NOT NULL
+);
+
+
+-- ms_django.dbo.SALE definition
+
+-- Drop table
+
+-- DROP TABLE ms_django.dbo.SALE;
+
+CREATE TABLE ms_django.dbo.SALE (
+	ntab char(10) COLLATE Cyrillic_General_CI_AS NOT NULL,
+	ID bigint IDENTITY(1,1) NOT NULL,
+	AMCOM decimal(10,2) NULL,
+	kassid int NULL,
+	SUM_GP decimal(10,2) NULL,
+	[DATE] datetime NULL,
+	IACTIVE smallint DEFAULT 1 NULL,
+	UUID char(36) COLLATE Cyrillic_General_CI_AS NULL,
+	fcard int NULL,
+	ncard int NULL,
+	Vid int NULL,
+	Kol int NULL,
+	CONSTRAINT PK_SALE_copy PRIMARY KEY (ntab,ID)
+);
+ CREATE NONCLUSTERED INDEX IDX_SALE ON dbo.SALE (  fcard ASC  , ncard ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+
+
+-- ms_django.dbo.Talon definition
+
+-- Drop table
+
+-- DROP TABLE ms_django.dbo.Talon;
+
+CREATE TABLE ms_django.dbo.Talon (
+	Vid int NOT NULL,
+	name varchar(25) COLLATE Cyrillic_General_CI_AS NOT NULL,
+	Use_Kol smallint NULL,
+	ID numeric(38,0) IDENTITY(0,1) NOT NULL
+);
+
+
+CREATE PROCEDURE dbo.sp_accept_amcom_pay
+   @fcard INT,
+   @ncard int,
+   @amcom DECIMAL(10,2),
+   @kassid INT,
+   @SUM_GP DECIMAL(10,2),
+   @DATE DATETIME,
+   @vid INT,
+   @kol INT
+AS 
+BEGIN
+  DECLARE @ntab CHAR(10)
+  DECLARE @fio VARCHAR(100) 
+  DECLARE @UUID CHAR(36) 
+  DECLARE @amcom_c DECIMAL(10,2)
+
+  SET @ntab=''
+  SET @fio=''
+  SET @UUID=''
+
+  IF EXISTS(SELECT * FROM dbo.CARDS WHERE ncard=@ncard AND fcard=@fcard AND Vid=@Vid) BEGIN
+    SELECT TOP 1 @ntab=ntab, @fio=FIO, @UUID=UUID, @amcom_c= AMCOM FROM dbo.CARDS WHERE (ncard=@ncard  AND fcard=@fcard  AND Vid=@Vid)
+  END
+
+
+  INSERT INTO dbo.SALE (NTAB,AMCOM,kassid,SUM_GP,[DATE],fcard,ncard,UUID,Vid,Kol)
+  VALUES (@ntab,@amcom,@kassid,@SUM_GP,@DATE,@fcard,@ncard,@UUID,@Vid, @kol);
+
+
+RETURN 0
+END;
+
+
+CREATE PROCEDURE dbo.sp_get_amcom_V2
+@fcard INT,
+@ncard int,
+@scard VARCHAR(20)
+AS 
+BEGIN
+  DECLARE @status INT 
+  DECLARE @ntab CHAR(10)
+  DECLARE @fio VARCHAR(100) 
+  DECLARE @amcom DECIMAL(10,2) 
+  DECLARE @SumUse DECIMAL(10,2) 
+  DECLARE @Vid INT 
+
+  
+  SET @status=7   -- работник не найден
+  SET @ntab=0
+  SET @fio=''
+  SET @amcom=0
+  SET @SumUse=0
+  SET @Vid=1
+
+  IF EXISTS(SELECT * FROM dbo.CARDS WHERE fCard=@fcard AND nCard=@ncard AND Vid=@Vid) BEGIN
+--  IF EXISTS(SELECT * FROM dbo.CARDS WHERE nCard=@ncard) BEGIN
+    SELECT @status=STATUS, @ntab=NTAB, @fio=FIO, @amcom=AMCOM FROM dbo.CARDS WHERE fCard=@fcard AND nCard=@ncard  AND Vid=@Vid
+--    SELECT @status=STATUS, @ntab=NTAB, @fio=FIO, @amcom=AMCOM FROM dbo.CARDS WHERE nCard=@ncard
+
+   IF EXISTS(SELECT * FROM dbo.SALE WHERE (nCard=@ncard AND fCard=@fcard AND Vid=@Vid AND (CONVERT (date, DATE) = CONVERT (date, GETDATE())))) BEGIN
+    SELECT @amcom= (select max(i) from ( VALUES ((SELECT @amcom -   SUM(AMCOM) FROM dbo.SALE WHERE (Vid=@Vid AND nCard=@ncard  AND fCard=@fcard AND (CONVERT(date, DATE) = CONVERT (date, GETDATE())))  GROUP BY NTAB)),(0)) AS T(i)) 
+
+   END
+   
+  END
+
+  SELECT @status AS status, @ntab AS ntab, @fio AS fio, @amcom AS amcom   
+END;
+
+
+CREATE PROCEDURE dbo.sp_get_talon
+  @fcard INT
+  ,@ncard int
+  ,@scard VARCHAR(20)
+AS 
+BEGIN
+--  (select max(i) from ( VALUES ((SELECT SUM(AMCOM) FROM dbo.SALE WHERE (Vid=@Vid AND nCard=@ncard  AND fCard=@fcard AND (CONVERT(date, DATE) = CONVERT (date, GETDATE()))) GROUP BY NTAB)),(0)) AS T(i)) 
+  SELECT ROW_NUMBER() OVER(ORDER BY c.NTAB) AS NUM,c.NTAB, c.FIO, (c.AMCOM-isNull(ca.AMCOM,0)) AS AMCOM , c.STATUS, c.vid, (c.KolAll-isNull(cb.Kol,0)) AS KolAll, (c.Kol-isNull(ca.Kol,0)) AS Kol, t.name FROM dbo.CARDS c 
+    LEFT JOIN dbo.Talon t ON c.vid = t.vid
+    LEFT JOIN (SELECT Vid, isNull(SUM(AMCOM),0) AS AMCOM,isNull(SUM(Kol),0) AS Kol FROM dbo.SALE WHERE (Vid!=3  AND nCard=@ncard  AND fCard=@fcard AND (CONVERT(date, DATE) = CONVERT (date, GETDATE()))) GROUP BY Vid) AS ca ON c.vid = ca.vid
+    LEFT JOIN (SELECT Vid, isNull(SUM(AMCOM),0) AS AMCOM,isNull(SUM(Kol),0) AS Kol FROM dbo.SALE WHERE (nCard=@ncard  AND fCard=@fcard AND month(DATE) = month(GETDATE())  AND year(DATE) = year(GETDATE())) GROUP BY Vid) AS cb ON c.vid = cb.vid
+    WHERE c.fCard=@fcard AND c.nCard=@ncard  AND c.STATUS=0
+END;
+

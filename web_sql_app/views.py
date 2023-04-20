@@ -119,7 +119,7 @@ class Sp_Get_TalonView(View):
 class Sp_Accept_Amcom_PayView(View):
     def get(self, request, *args, **kwargs):
         form = Sp_accept_amcom_pay()
-        sale = Sale.objects.all().order_by('-date')
+        sale = Sale.objects.all().order_by('-id')
         
         paginator = Paginator(sale, 10)
         page_number = request.GET.get('page')
