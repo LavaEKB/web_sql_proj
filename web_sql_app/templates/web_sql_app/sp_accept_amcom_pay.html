@@ -2,6 +2,7 @@
 {% block content %}
 <br>
 <div class="container">
+
   <h4 align="center">Запись данных продаж по кассе по всем видам питания</h4>
   <br>
   <form class="form-control" method="post" action="{% url 'sp_accept_amcom_pay' %}">
@@ -35,6 +36,8 @@
           {% if user.is_authenticated %}
           <button class="btn btn-primary" type="submit">Запрос</button>
           {% endif %}
+
+        </div>  
         </div>
   </form>
 </div>

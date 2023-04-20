@@ -1,12 +1,13 @@
 from django.shortcuts import render
+from django.template import RequestContext, Template
 from django.views import View
 from django.db import connection
 from django.contrib.auth import login, authenticate
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator
 from .forms import Sp_get_amcom, Sp_get_talon, Sp_accept_amcom_pay, SignInForm
 from .models import Sale
-
+from django.contrib import messages
 
 class MainView(View): 
     def get(self, request, *args, **kwargs):
@@ -139,10 +140,11 @@ class Sp_Accept_Amcom_PayView(View):
             cursor = connection.cursor()
             cursor.execute("{CALL dbo.sp_accept_amcom_pay (%s, %s, %s, %s, %s, %s, %s, %s)}", params)
             cursor.cancel() 
+            messages.success(request, "Запись добавлена")
         except Exception:
+            messages.error(request, "Ошибка базы данных")
             return render(request, 'web_sql_app/block/prompt.html', context={
             'prompt': 'Ошибка базы данных'})
         return render(request, 'web_sql_app/block/prompt.html', context={
-            'prompt': 'Запись добавлена', 'form': form,})
+            'prompt': 'Запись добавлена'})
     
-
