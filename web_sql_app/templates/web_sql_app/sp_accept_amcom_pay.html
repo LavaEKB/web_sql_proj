@@ -3,7 +3,10 @@
 <br>
 <div class="container">
 
-  <h4 align="center">Запись данных продаж по кассе по всем видам питания</h4>
+  <!--Сообщения-->
+  {% include './block/messages.html' %}
+
+    <h4 align="center">Запись данных продаж по кассе по всем видам питания</h4>
   <br>
   <form class="form-control" method="post" action="{% url 'sp_accept_amcom_pay' %}">
     {% csrf_token %}

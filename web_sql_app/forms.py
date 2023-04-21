@@ -27,7 +27,7 @@ class Sp_get_amcom(forms.Form):
             'class': "form-control",
             'placeholder':"Номер карты",
             'id': "fcard",
-            'type': "text",
+            'type': "number",
         }),
     )
 
@@ -60,7 +60,7 @@ class Sp_get_talon(forms.Form):
             'class': "form-control",
             'placeholder':"Номер карты",
             'id': "fcard",
-            'type': "text",
+            'type': "number",
         }),
     )
 
@@ -93,6 +93,7 @@ class Sp_accept_amcom_pay(forms.Form):
             'class': "form-control",
             'placeholder':"Номер карты",
             'id': "fcard",
+            'type': "number",
         }),
     )
 
@@ -110,6 +111,7 @@ class Sp_accept_amcom_pay(forms.Form):
             'class': "form-control",
             'placeholder':"amcom",
             'id': "amcom",
+            'type': "number",
         }),
     )
     kassid = forms.IntegerField(
@@ -118,6 +120,7 @@ class Sp_accept_amcom_pay(forms.Form):
             'class': "form-control",
             'placeholder':"kassid",
             'id': "kassid",
+            'type': "number",
         }),
     )
     sum = forms.DecimalField(
@@ -126,6 +129,7 @@ class Sp_accept_amcom_pay(forms.Form):
             'class': "form-control",
             'placeholder':"sum",
             'id': "sum",
+            'type': "number",
         }),
     )
     data = forms.DateTimeField(
@@ -134,7 +138,7 @@ class Sp_accept_amcom_pay(forms.Form):
             'class': "form-control",
             'placeholder':"data",
             'id': "data",
-             'type': "date"
+            'type': "date"
         }),
     )  
     #data = forms.DateTimeField(label='Дата рождения', 
@@ -148,6 +152,7 @@ class Sp_accept_amcom_pay(forms.Form):
             'class': "form-control",
             'placeholder':"vid",
             'id': "vid",
+            'type': "number",
         }),
     )
     kol = forms.IntegerField(
@@ -156,10 +161,8 @@ class Sp_accept_amcom_pay(forms.Form):
             'class': "form-control",
             'placeholder':"kol",
             'id': "kol",
+            'type': "number",
         }
         ),
     )
-    #def add(self):
-    #        raise forms.ValidationError(
-    #            "Запись добавлена"
-    #        )
+    

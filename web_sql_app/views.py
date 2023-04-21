@@ -140,11 +140,23 @@ class Sp_Accept_Amcom_PayView(View):
             cursor = connection.cursor()
             cursor.execute("{CALL dbo.sp_accept_amcom_pay (%s, %s, %s, %s, %s, %s, %s, %s)}", params)
             cursor.cancel() 
+        
+            sale = Sale.objects.all().order_by('-id')
+            paginator = Paginator(sale, 10)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+
             messages.success(request, "Запись добавлена")
+
         except Exception:
+            sale = Sale.objects.all().order_by('-id')
+            paginator = Paginator(sale, 10)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            
             messages.error(request, "Ошибка базы данных")
-            return render(request, 'web_sql_app/block/prompt.html', context={
-            'prompt': 'Ошибка базы данных'})
-        return render(request, 'web_sql_app/block/prompt.html', context={
-            'prompt': 'Запись добавлена'})
+            #return render(request, 'web_sql_app/block/prompt.html', context={
+            #'prompt': 'Ошибка базы данных'})
+        return render(request, 'web_sql_app/sp_accept_amcom_pay.html', context={
+            'form': form, 'page_obj': page_obj,})
     
