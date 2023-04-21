@@ -2,6 +2,10 @@
   {% block content %}
   <br>
   <div class="container">
+
+<!--Сообщения-->
+{% include './block/messages.html' %}
+
     <h4 align="center">Информация по пропуску</h4>
     <br>
   <form class="form-control" method="post" action="{% url 'sp_get_amcom' %}"> 

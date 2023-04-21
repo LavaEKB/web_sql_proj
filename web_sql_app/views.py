@@ -61,7 +61,7 @@ class Sp_Get_AmcomView(View):
                 col = [dict(zip(columns, row)) for row in cursor.fetchall()]
                 cursor.cancel() 
             except Exception:
-                print("Ошибка базы данных")
+                messages.error(request, "Ошибка базы данных")
 
             request.session['amcom'] = col
             paginator = Paginator(col, 2)
@@ -106,7 +106,7 @@ class Sp_Get_TalonView(View):
                 col = [dict(zip(columns, row1)) for row1 in cursor.fetchall()]
                 cursor.cancel() 
             except Exception:
-                print("Ошибка базы данных")
+                messages.error(request, "Ошибка базы данных")
 
             request.session['talon'] = col
             paginator = Paginator(col, 2)
