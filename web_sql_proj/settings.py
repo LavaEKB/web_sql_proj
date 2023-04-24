@@ -89,28 +89,7 @@ DATABASES = {
         "PORT": "",
         "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server", 
         } 
-    }, 
-    'emul_1c': { 
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'test_db', 
-        'USER': 'root', 
-        'PASSWORD': 'Secret13`', 
-        'HOST': '127.0.0.1', 
-        'PORT': '3306', 
-        'OPTIONS': { 
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'" 
-        } 
-    },
-    'ms_sql': { 
-        "ENGINE": "mssql",
-        "NAME": "ms_django",
-        "USER": "sa",
-        "PASSWORD": "Secret13`",
-        "HOST": "localhost",
-        "PORT": "",
-        "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server", 
-        } 
-    }     
+    }    
 } 
 #DATABASE_ROUTERS = ['App_1.router.OneDBRouter','App_2.router.TwoDBRouter','App_3.router.TreeDBRouter']
 
