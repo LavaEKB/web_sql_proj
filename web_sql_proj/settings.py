@@ -27,6 +27,8 @@ LOGIN_REDIRECT_URL = '/'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-#9q+3e(a5xw^v(w#r0@2s(q8=fg%=zg@$)&)cn&gyafncwaob6'
 
+CSRF_TRUSTED_ORIGINS=["https://*.loca.lt"] 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -129,6 +131,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
