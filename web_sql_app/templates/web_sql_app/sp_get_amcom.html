@@ -9,7 +9,6 @@
     <h4 align="center">Информация по пропуску</h4>
     <br>
   <form class="form-control" method="post" action="{% url 'sp_get_amcom' %}"> 
-  {% csrf_token %}
     <div class="row g-2">
       <div class="col-sm-4">
         {{ form.fcard }}
@@ -21,9 +20,9 @@
           {{ form.scard }}
       </div>
       <div class="col-sm-6">
-        {% if user.is_authenticated %}
+
         <button class="btn btn-primary" type="submit">Запрос</button>
-        {% endif %}
+
       </div>
 </form>
   </div>
@@ -59,34 +58,3 @@
 
 {% block pagination %}
 
-<div class="container">
-
-    <nav aria-label="Paginate me">
-      <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-          <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">Предыдущая</a>
-        {% else %}
-        <li class="page-item disabled">
-          <a class="page-link disabled" href="#" tabindex="-1">Предыдущая</a>
-        </li>
-        {% endif %}
-        {% for i in page_obj.paginator.page_range %}
-        {% if i == page_obj.number %}
-          <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-        {% else %}
-          <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-        {% endif %}
-        {% endfor %}
-        {% if page_obj.has_next %}
-          <a class="page-link" href="?page={{ page_obj.next_page_number }}">Следующая</a>
-        {% else %}
-          <li class="page-item disabled">
-            <a class="page-link" href="#">Следующая</a>
-          </li>
-        {% endif %}
-      </ul>
-    </nav>
-    <br>
-
-</div>
-{% endblock %}

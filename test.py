@@ -1,25 +1,16 @@
-def application(env, start_response):
-    start_response('200 OK', [('Content-Type', 'text/html')])
-    return [b"Hello World!"]
+from sqlalchemy import create_engine
+import pyodbc
+import fdb
 
-upstream django {
-	server unix:///home/lava/Work/web_sql_django/web_sql_proj/web_sql_proj.sock;
-}
-server {
-	listen 8888;
-	server_name django django;
-	charset utf-8;
-	client_max_body_size 75M;
+for driver in pyodbc.drivers():
+    print(driver)
 
-	location /media {
-		alias /home/lava/Work/web_sql_django/media;
-	}
-	location /static {
-		alias /home/lava/Work/web_sql_django/static;
-	}
-
-	location / {
-		uwsgi_pass django;
-		include /home/lava/Work/web_sql_django/web_sql_proj/uwsgi_params;
-	}
-}
+con = fdb.connect(
+    host='localhost', database='/opt/firebird/examples/empbuild/CASHERRN.gdb',
+    #host='89.251.77.111/53050', database='C:\_SoftUr\DB\CASHERRN.gdb',
+    charset='WIN1251',
+    user='SYSDBA', password='masterkey'
+  )
+cur = con.cursor()
+cur.execute("select * from credcard")
+print(cur.fetchall())
